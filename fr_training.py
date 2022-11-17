@@ -235,23 +235,9 @@ cm = confusion_matrix(y_valid, y_pred)
 cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
 
 plt.figure(figsize=(10, 10))
-plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
-plt.title('Confusion matrix')
-plt.colorbar()
-tick_marks = np.arange(len(emotions))
-plt.xticks(tick_marks, emotions, rotation=45)
-plt.yticks(tick_marks, emotions)
-
-fmt = '.2f'
-thresh = cm.max() / 2.
-for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
-    plt.text(j, i, format(cm[i, j], fmt),
-             horizontalalignment="center",
-             color="white" if cm[i, j] > thresh else "black")
-
-plt.tight_layout()
-plt.ylabel('True label')
-plt.xlabel('Predicted label')
+sns.heatmap(cm, annot=True, fmt='.2f', xticklabels=emotions, yticklabels=emotions)
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
 plt.show()
 
 # Save model
