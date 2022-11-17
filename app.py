@@ -1,17 +1,20 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS, cross_origin
 from keras.saving.save import load_model
 import numpy as np
-from PIL import Image
 import requests
 from io import BytesIO
 import tensorflow as tf
 import base64
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 # Base route
 @app.route('/')
+@cross_origin()
 def base():
     return 'Face emotion recognition API'
 
