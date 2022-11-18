@@ -2,18 +2,11 @@ import seaborn as sns
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-import pickle
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
-from keras.models import Model
-from keras.applications import InceptionV3
-from keras.layers import Dropout, Flatten, Dense, Input
 import tensorflow as tf
 from keras.models import Sequential
 from keras.layers import *
-from keras.preprocessing.image import ImageDataGenerator
 
 # Load training data
 train_df = pd.read_csv('dataset/train.csv')
@@ -51,6 +44,33 @@ for emotion in np.unique(labels):
         plt.axis('off')
     row += 5
 
+plt.show()
+
+# Balance dataset
+# Get the number of samples for each emotion
+num_samples = train_df.emotion.value_counts().sort_index(ascending=True).to_numpy()
+
+# Get the minimum number of samples
+min_samples = np.min(num_samples)
+
+# Get the index of the emotions with the minimum number of samples
+min_samples_index = np.where(num_samples == min_samples)[0]
+
+# Get the index of the emotions with the maximum number of samples
+max_samples_index = np.where(num_samples != min_samples)[0]
+
+# Get the index of the samples to be removed
+remove_samples_index = []
+for i in max_samples_index:
+    remove_samples_index.extend(train_df[train_df['emotion'] == i].index[min_samples:])
+
+# Remove the samples
+train_df = train_df.drop(remove_samples_index)
+
+# Label distribution
+train_dist = (train_df.emotion.value_counts() / len(train_df)).to_frame().sort_index(ascending=True).T
+print("Label distribution after balancing:")
+sns.displot(train_dist, x=train_df.emotion)
 plt.show()
 
 # Data split for training and validation
